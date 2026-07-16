@@ -1,0 +1,7 @@
+/cw
+/dist/
+*.test
+
+# このリポジトリでのドッグフーディング用の実データ(個人のテスト部屋)。
+# 利用者のリポジトリでは .config/chatwork-cli.json はコミットして共有する想定。
+/.config/chatwork-cli.json

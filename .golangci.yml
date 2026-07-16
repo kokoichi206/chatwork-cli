@@ -1,0 +1,10 @@
+version: "2"
+
+linters:
+  settings:
+    errcheck:
+      # CLI の標準出力への書き込み失敗は握りつぶしてよい(パイプ切断等で、対処のしようがない)。
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
