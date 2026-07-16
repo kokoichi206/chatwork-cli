@@ -14,18 +14,37 @@ It uses your personal API token, so everything you read and post happens **as yo
 
 ## Install
 
+### macOS / Linux
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/kokoichi206/chatwork-cli/main/scripts/install.sh | sh
+cw --version
+```
+
+The binary goes to `~/.local/bin`. Set `CW_INSTALL_DIR` to install somewhere else:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/kokoichi206/chatwork-cli/main/scripts/install.sh | CW_INSTALL_DIR=/usr/local/bin sh
+```
+
+### Manual download
+
+Grab an archive from [Releases](https://github.com/kokoichi206/chatwork-cli/releases) and put `cw` somewhere on your `PATH`. On Windows, extract `cw.exe` from the zip and add it to your `PATH`.
+
+### From source
+
 ```sh
 go install github.com/kokoichi206/chatwork-cli/cmd/cw@latest
 ```
 
-Or grab a binary from [Releases](https://github.com/kokoichi206/chatwork-cli/releases).
-
-To update a release binary in place:
+### Update
 
 ```sh
 cw update            # replace the running binary with the latest release
 cw update --dry-run  # only check whether a newer release exists
 ```
+
+Re-running the installer also works.
 
 ## Get started
 
