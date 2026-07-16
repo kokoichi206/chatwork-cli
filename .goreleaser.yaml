@@ -2,6 +2,10 @@ version: 2
 
 project_name: chatwork-cli
 
+before:
+  hooks:
+    - go mod tidy
+
 builds:
   - id: cw
     main: ./cmd/cw
@@ -15,6 +19,9 @@ builds:
     goarch:
       - amd64
       - arm64
+    flags:
+      - -trimpath
+    mod_timestamp: "{{ .CommitTimestamp }}"
     ldflags:
       - -s -w -X main.version={{.Version}}
 
@@ -28,6 +35,9 @@ archives:
 
 checksum:
   name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
 
 changelog:
   use: github-native
