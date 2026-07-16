@@ -20,6 +20,13 @@ go install github.com/kokoichi206/chatwork-cli/cmd/cw@latest
 
 または [Releases](https://github.com/kokoichi206/chatwork-cli/releases) からバイナリを取得してください。
 
+リリースバイナリはその場で更新できます。
+
+```sh
+cw update            # 実行中のバイナリを最新リリースに置き換える
+cw update --dry-run  # 新しいリリースがあるかの確認のみ
+```
+
 ## はじめる
 
 ```sh

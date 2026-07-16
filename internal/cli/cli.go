@@ -112,6 +112,7 @@ func New(deps Deps) *cobra.Command {
 		a.myCmd(),
 		a.docsCmd(),
 		a.agentCmd(),
+		a.updateCmd(),
 	)
 	return root
 }
