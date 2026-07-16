@@ -22,10 +22,11 @@ type cliResult struct {
 }
 
 type cliOpts struct {
-	cfg   *config.Config
-	isTTY bool
-	stdin string
-	env   map[string]string
+	cfg     *config.Config
+	isTTY   bool
+	stdin   string
+	env     map[string]string
+	dataDir string
 }
 
 func runCLI(t *testing.T, handler http.Handler, opts cliOpts, args ...string) cliResult {
@@ -51,6 +52,7 @@ func runCLI(t *testing.T, handler http.Handler, opts cliOpts, args ...string) cl
 		StdinIsTTY:  opts.isTTY,
 		Getenv:      func(key string) string { return opts.env[key] },
 		Version:     "test",
+		DataDir:     opts.dataDir,
 	})
 	root.SetArgs(args)
 	err := root.Execute()
@@ -348,7 +350,7 @@ func TestDocsCoversCoreCommands(t *testing.T) {
 	if res.err != nil {
 		t.Fatal(res.err)
 	}
-	for _, want := range []string{"cw messages reply", "cw rooms members", "[To:", "rp aid=", "--output json", "CHATWORK_API_TOKEN"} {
+	for _, want := range []string{"cw messages reply", "cw rooms members", "cw sync", "--local", "[To:", "rp aid=", "--output json", "CHATWORK_API_TOKEN"} {
 		if !strings.Contains(res.stdout, want) {
 			t.Errorf("docs missing %q", want)
 		}

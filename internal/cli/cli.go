@@ -38,6 +38,7 @@ type Deps struct {
 	Version     string
 	Home        string // 空なら os.UserHomeDir()。agent init --scope user の書き込み先
 	WorkDir     string // 空ならカレントディレクトリ。agent init --scope repo の書き込み先
+	DataDir     string // 空なら XDG_DATA_HOME(既定 ~/.local/share)/chatwork-cli。cw sync のローカル履歴保存先
 
 	// ReadPassword は TTY でのトークン入力に使う(エコーなし)。
 	// nil の場合は Stdin からの行読みにフォールバックする(テスト用)。
@@ -106,6 +107,7 @@ func New(deps Deps) *cobra.Command {
 		a.authCmd(),
 		a.roomsCmd(),
 		a.messagesCmd(),
+		a.syncCmd(),
 		a.tasksCmd(),
 		a.filesCmd(),
 		a.meCmd(),

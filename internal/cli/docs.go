@@ -107,6 +107,20 @@ Account selection is personal: --account flag > CHATWORK_API_TOKEN > the default
     cw files list <room_id> --output json
     cw files get <room_id> <file_id> --output json   # download_url expires in ~30 seconds; fetch it immediately
 
+### Local history (past the latest-100 limit)
+
+The messages API serves only the latest 100 messages with no pagination.
+` + "`cw sync`" + ` accumulates them into local history (JSONL under
+` + "`~/.local/share/chatwork-cli/<account_id>/rooms/`" + `, XDG_DATA_HOME respected), deduped by message_id:
+
+    cw sync <room_id> --output json     # {"room_id":...,"new":N,"updated":N,"gap":bool,"messages":[new ones only]}
+    cw sync --all                       # every room (1 API request per room)
+    cw messages read <room_id> --local --since 2026-07-01 --output json   # read history, no fetch
+
+- "messages" in the sync output contains only the newly seen messages, so "sync at task start, then act on the returned diff" works directly.
+- "gap": true = local history no longer overlaps the fetched window — usually more than 100 messages were posted since the last sync, and the overflow is permanently unavailable from the API (sync frequently to avoid this).
+- Local history keeps deleted messages (the API cannot report deletions); edits are reflected.
+
 ### Unread management
 
     cw my status --output json          # unread/mention/task counts
@@ -121,7 +135,8 @@ Account selection is personal: --account flag > CHATWORK_API_TOKEN > the default
 
 ## Cautions
 
-- ` + "`messages read --force=false`" + ` returns only messages not fetched before with this token (may be empty). Default is --force (latest 100).
+- ` + "`messages read --force=false`" + ` returns only messages not fetched before with this token (may be empty),
+  and consumes a server-side cursor shared with other tools — for diffing, use ` + "`cw sync`" + ` instead. Default is --force (latest 100).
 - message_id is a string; keep it quoted.
 - Posting is rate-limited to 10 per 10 seconds — batch content into one message instead of many small ones.
 `
