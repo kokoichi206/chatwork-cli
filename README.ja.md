@@ -14,11 +14,30 @@
 
 ## インストール
 
+### macOS / Linux
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/kokoichi206/chatwork-cli/main/scripts/install.sh | sh
+cw --version
+```
+
+インストール先は `~/.local/bin` です。`CW_INSTALL_DIR` で変更できます:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/kokoichi206/chatwork-cli/main/scripts/install.sh | CW_INSTALL_DIR=/usr/local/bin sh
+```
+
+更新はインストーラを再実行してください。
+
+### 手動ダウンロード
+
+[Releases](https://github.com/kokoichi206/chatwork-cli/releases) からアーカイブを取得し、`cw` を PATH の通った場所に置いてください。Windows は zip から `cw.exe` を取り出して PATH に追加してください。
+
+### ソースから
+
 ```sh
 go install github.com/kokoichi206/chatwork-cli/cmd/cw@latest
 ```
-
-または [Releases](https://github.com/kokoichi206/chatwork-cli/releases) からバイナリを取得してください。
 
 ## はじめる
 
