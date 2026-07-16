@@ -14,9 +14,9 @@ var version = "dev"
 
 func main() {
 	root := cli.New(cli.Deps{
-		Stdout:  os.Stdout,
-		Stderr:  os.Stderr,
-		Stdin:   os.Stdin,
+		Stdout:      os.Stdout,
+		Stderr:      os.Stderr,
+		Stdin:       os.Stdin,
 		StdoutIsTTY: term.IsTerminal(int(os.Stdout.Fd())),
 		StdinIsTTY:  term.IsTerminal(int(os.Stdin.Fd())),
 		Getenv:      os.Getenv,
