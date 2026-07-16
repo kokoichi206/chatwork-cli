@@ -163,14 +163,14 @@ func TestInteractiveLoginShowsTokenGuide(t *testing.T) {
 	srv := newMeServer(t)
 	var stdout, stderr bytes.Buffer
 	root := cli.New(cli.Deps{
-		Stdout:     &stdout,
-		Stderr:     &stderr,
-		Stdin:      strings.NewReader("some-token\n"),
-		ConfigPath: filepath.Join(t.TempDir(), "accounts.json"),
-		BaseURL:    srv,
+		Stdout:      &stdout,
+		Stderr:      &stderr,
+		Stdin:       strings.NewReader("some-token\n"),
+		ConfigPath:  filepath.Join(t.TempDir(), "accounts.json"),
+		BaseURL:     srv,
 		StdoutIsTTY: true,
 		StdinIsTTY:  true,
-		Getenv:     func(string) string { return "" },
+		Getenv:      func(string) string { return "" },
 	})
 	root.SetArgs([]string{"auth", "login"})
 	if err := root.Execute(); err != nil {
@@ -192,14 +192,14 @@ func TestInteractiveLoginUsesHiddenInput(t *testing.T) {
 
 	var stdout, stderr bytes.Buffer
 	root := cli.New(cli.Deps{
-		Stdout:     &stdout,
-		Stderr:     &stderr,
-		Stdin:      strings.NewReader("must-not-be-read\n"),
-		ConfigPath: filepath.Join(t.TempDir(), "accounts.json"),
-		BaseURL:    srv.URL,
+		Stdout:      &stdout,
+		Stderr:      &stderr,
+		Stdin:       strings.NewReader("must-not-be-read\n"),
+		ConfigPath:  filepath.Join(t.TempDir(), "accounts.json"),
+		BaseURL:     srv.URL,
 		StdoutIsTTY: true,
 		StdinIsTTY:  true,
-		Getenv:     func(string) string { return "" },
+		Getenv:      func(string) string { return "" },
 		ReadPassword: func() ([]byte, error) {
 			return []byte("hidden-token"), nil
 		},

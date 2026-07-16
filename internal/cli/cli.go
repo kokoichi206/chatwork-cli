@@ -35,9 +35,9 @@ type Deps struct {
 	StdoutIsTTY bool
 	StdinIsTTY  bool
 	Getenv      func(string) string
-	Version    string
-	Home       string // 空なら os.UserHomeDir()。agent init --scope user の書き込み先
-	WorkDir    string // 空ならカレントディレクトリ。agent init --scope repo の書き込み先
+	Version     string
+	Home        string // 空なら os.UserHomeDir()。agent init --scope user の書き込み先
+	WorkDir     string // 空ならカレントディレクトリ。agent init --scope repo の書き込み先
 
 	// ReadPassword は TTY でのトークン入力に使う(エコーなし)。
 	// nil の場合は Stdin からの行読みにフォールバックする(テスト用)。
@@ -112,6 +112,7 @@ func New(deps Deps) *cobra.Command {
 		a.myCmd(),
 		a.docsCmd(),
 		a.agentCmd(),
+		a.updateCmd(),
 	)
 	return root
 }

@@ -27,8 +27,6 @@ The binary goes to `~/.local/bin`. Set `CW_INSTALL_DIR` to install somewhere els
 curl -fsSL https://raw.githubusercontent.com/kokoichi206/chatwork-cli/main/scripts/install.sh | CW_INSTALL_DIR=/usr/local/bin sh
 ```
 
-To update, run the installer again.
-
 ### Manual download
 
 Grab an archive from [Releases](https://github.com/kokoichi206/chatwork-cli/releases) and put `cw` somewhere on your `PATH`. On Windows, extract `cw.exe` from the zip and add it to your `PATH`.
@@ -38,6 +36,15 @@ Grab an archive from [Releases](https://github.com/kokoichi206/chatwork-cli/rele
 ```sh
 go install github.com/kokoichi206/chatwork-cli/cmd/cw@latest
 ```
+
+### Update
+
+```sh
+cw update            # replace the running binary with the latest release
+cw update --dry-run  # only check whether a newer release exists
+```
+
+Re-running the installer also works.
 
 ## Get started
 
