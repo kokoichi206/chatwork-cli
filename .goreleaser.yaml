@@ -16,7 +16,10 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -s -w -X main.version={{.Version}}
+      - -s -w
+      - -X github.com/kokoichi206/chatwork-cli/internal/version.Version={{ .Version }}
+      - -X github.com/kokoichi206/chatwork-cli/internal/version.Commit={{ .Commit }}
+      - -X github.com/kokoichi206/chatwork-cli/internal/version.Date={{ .Date }}
 
 archives:
   - formats: [tar.gz]

@@ -7,10 +7,8 @@ import (
 	"golang.org/x/term"
 
 	"github.com/kokoichi206/chatwork-cli/internal/cli"
+	"github.com/kokoichi206/chatwork-cli/internal/version"
 )
-
-// version は goreleaser の ldflags で上書きされる。
-var version = "dev"
 
 func main() {
 	root := cli.New(cli.Deps{
@@ -20,7 +18,7 @@ func main() {
 		StdoutIsTTY: term.IsTerminal(int(os.Stdout.Fd())),
 		StdinIsTTY:  term.IsTerminal(int(os.Stdin.Fd())),
 		Getenv:      os.Getenv,
-		Version:     version,
+		Version:     version.String(),
 		ReadPassword: func() ([]byte, error) {
 			return term.ReadPassword(int(os.Stdin.Fd()))
 		},
