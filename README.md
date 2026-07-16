@@ -20,6 +20,13 @@ go install github.com/kokoichi206/chatwork-cli/cmd/cw@latest
 
 Or grab a binary from [Releases](https://github.com/kokoichi206/chatwork-cli/releases).
 
+To update a release binary in place:
+
+```sh
+cw update            # replace the running binary with the latest release
+cw update --dry-run  # only check whether a newer release exists
+```
+
 ## Get started
 
 ```sh

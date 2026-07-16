@@ -50,6 +50,11 @@ To make this reference permanently discoverable, install the bundled Claude Code
     cw agent init --scope user         # or ~/.claude/skills/chatwork-cli/SKILL.md
     cw agent init --agents-md          # print a snippet to paste into AGENTS.md
 
+Release binaries can update themselves:
+
+    cw update                          # replace the running binary with the latest GitHub release
+    cw update --dry-run                # only check whether a newer release exists
+
 ## Project config (room aliases)
 
 If the repository has ` + "`.config/chatwork-cli.json`" + ` (searched upward from the current directory), its room aliases can be used anywhere a room_id is accepted:
