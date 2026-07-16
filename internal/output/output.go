@@ -59,10 +59,26 @@ func WriteTable(w io.Writer, header []string, rows [][]string) error {
 
 // sanitizeCell は改行・タブを潰して 1 セル 1 行に収める(本文プレビュー用)。
 func sanitizeCell(s string) string {
+	s = StripControl(s)
 	s = strings.ReplaceAll(s, "\t", " ")
-	s = strings.ReplaceAll(s, "\r\n", " ")
 	s = strings.ReplaceAll(s, "\n", " ")
 	return s
+}
+
+// StripControl は改行・タブ以外の制御文字を除去する。
+// Chatwork のメッセージ本文・表示名は他の参加者が自由に書けるため、
+// ANSI/OSC エスケープをそのまま端末へ流すと表示偽装等の注入が成立する。
+// table/text 出力の前に必ず通すこと(JSON 出力はエンコーダがエスケープするため対象外)。
+func StripControl(s string) string {
+	return strings.Map(func(r rune) rune {
+		if r == '\n' || r == '\t' {
+			return r
+		}
+		if r < 0x20 || r == 0x7f {
+			return -1
+		}
+		return r
+	}, s)
 }
 
 // Truncate はテーブル表示用に rune 単位で切り詰める。

@@ -51,6 +51,24 @@ func TestWriteTableFlattensNewlines(t *testing.T) {
 	}
 }
 
+func TestStripControlRemovesEscapeSequences(t *testing.T) {
+	got := output.StripControl("safe\x1b[31mred\x1b]0;title\x07\r\x00 text\nline\ttab")
+	want := "safe[31mred]0;title text\nline\ttab"
+	if got != want {
+		t.Errorf("StripControl() = %q, want %q", got, want)
+	}
+}
+
+func TestWriteTableStripsControlCharacters(t *testing.T) {
+	var buf bytes.Buffer
+	if err := output.WriteTable(&buf, []string{"BODY"}, [][]string{{"a\x1b[2Jb"}}); err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(buf.String(), "\x1b") {
+		t.Errorf("table output contains ESC: %q", buf.String())
+	}
+}
+
 func TestTruncate(t *testing.T) {
 	if got := output.Truncate("こんにちは世界", 5); got != "こんにちは…" {
 		t.Errorf("Truncate() = %q", got)

@@ -84,7 +84,7 @@ func (a *app) filesGetCmd() *cobra.Command {
 				return output.WriteJSON(a.deps.Stdout, file)
 			}
 			fmt.Fprintf(a.deps.Stdout, "file_id=%d filename=%s size=%d\ndownload_url=%s\n",
-				file.FileID, file.Filename, file.Filesize, file.DownloadURL)
+				file.FileID, output.StripControl(file.Filename), file.Filesize, file.DownloadURL)
 			return nil
 		},
 	}

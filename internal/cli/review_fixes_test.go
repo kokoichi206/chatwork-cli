@@ -145,6 +145,23 @@ func TestProjectAliasWithInvalidRoomIDIsUsageError(t *testing.T) {
 	}
 }
 
+// text 出力でメッセージ本文由来の端末エスケープが除去されること(端末注入対策)。
+func TestMessagesReadTextStripsControlCharacters(t *testing.T) {
+	handler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, `[{"message_id":"1","account":{"account_id":9,"name":"n\u001b[31m"},"body":"hi\u001b[2Jthere","send_time":1700000000}]`)
+	})
+	res := runCLI(t, handler, cliOpts{cfg: singleAccount()}, "messages", "read", "42", "--output", "text")
+	if res.err != nil {
+		t.Fatal(res.err)
+	}
+	if strings.Contains(res.stdout, "\x1b") {
+		t.Errorf("text output contains ESC: %q", res.stdout)
+	}
+	if !strings.Contains(res.stdout, "hi[2Jthere") {
+		t.Errorf("body content lost: %q", res.stdout)
+	}
+}
+
 // stdout がパイプ(非TTY)でも stdin が TTY なら対話ログイン・確認プロンプトは使えること。
 func TestStdinTTYControlsInteractivityIndependently(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {

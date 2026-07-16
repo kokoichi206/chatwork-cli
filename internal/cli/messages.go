@@ -70,7 +70,7 @@ func (a *app) messagesReadCmd() *cobra.Command {
 			case output.FormatText:
 				for _, m := range msgs {
 					fmt.Fprintf(a.deps.Stdout, "--- %s | %s (account_id=%d) | message_id=%s\n%s\n",
-						formatTime(m.SendTime), m.Account.Name, m.Account.AccountID, m.MessageID, m.Body)
+						formatTime(m.SendTime), output.StripControl(m.Account.Name), m.Account.AccountID, m.MessageID, output.StripControl(m.Body))
 				}
 				return nil
 			default:
@@ -205,7 +205,7 @@ func (a *app) messagesGetCmd() *cobra.Command {
 				return output.WriteJSON(a.deps.Stdout, msg)
 			}
 			fmt.Fprintf(a.deps.Stdout, "--- %s | %s (account_id=%d) | message_id=%s\n%s\n",
-				formatTime(msg.SendTime), msg.Account.Name, msg.Account.AccountID, msg.MessageID, msg.Body)
+				formatTime(msg.SendTime), output.StripControl(msg.Account.Name), msg.Account.AccountID, msg.MessageID, output.StripControl(msg.Body))
 			return nil
 		},
 	}
