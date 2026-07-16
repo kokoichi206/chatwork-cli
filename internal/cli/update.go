@@ -33,11 +33,14 @@ func (a *app) updateCmd() *cobra.Command {
 			switch {
 			case result.Updated:
 				fmt.Fprintf(a.deps.Stdout, "updated: %s -> %s\n", result.CurrentVersion, result.LatestVersion)
+			case result.UpdateAvailable:
+				fmt.Fprintf(a.deps.Stdout, "update available: %s -> %s (%s)\n",
+					result.CurrentVersion, result.LatestVersion, result.AssetName)
 			case result.CurrentVersion == result.LatestVersion:
 				fmt.Fprintf(a.deps.Stdout, "already up to date (%s)\n", result.CurrentVersion)
 			default:
-				fmt.Fprintf(a.deps.Stdout, "update available: %s -> %s (%s)\n",
-					result.CurrentVersion, result.LatestVersion, result.AssetName)
+				fmt.Fprintf(a.deps.Stdout, "current version %s is newer than the latest release %s\n",
+					result.CurrentVersion, result.LatestVersion)
 			}
 			return nil
 		},
