@@ -90,3 +90,7 @@ cw docs                      # self-contained Markdown reference an agent can re
 ```
 
 Stable JSON schemas with IDs for command chaining, meaningful exit codes (0/1/2), and `--yes` guards on destructive commands in non-interactive mode.
+
+## License
+
+[MIT](./LICENSE)
