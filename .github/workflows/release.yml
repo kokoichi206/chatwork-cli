@@ -15,20 +15,26 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       # タグ検証は main と全タグの参照が手元にあることが前提。
       - name: Fetch release refs
         run: |
           git fetch --force origin \
             "+refs/heads/main:refs/remotes/origin/main" \
             "+refs/tags/*:refs/tags/*"
-      - uses: actions/setup-go@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+
       - name: Validate release tag
         run: go run ./tools/releaseguard --tag "$GITHUB_REF_NAME" --base origin/main
+
       - name: Check existing GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,7 +62,9 @@ jobs:
               exit 1
               ;;
           esac
-      - uses: goreleaser/goreleaser-action@v6
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
         with:
           version: "~> v2"
           args: release --clean
