@@ -46,6 +46,11 @@ Multiline body via stdin:
     ...
     EOF
 
+Read past the latest 100 messages (the API has no pagination; `cw sync` accumulates local history):
+
+    cw sync <room_id> --output json               # returns only the newly seen messages
+    cw messages read <room_id> --local --since YYYY-MM-DD --output json
+
 Tasks:
 
     cw tasks list --output json
@@ -56,4 +61,5 @@ Tasks:
 
 - Posting is rate-limited (10 / 10 sec): send one combined message instead of many small ones.
 - `message_id` is a string — keep it quoted in scripts.
+- `cw sync` reporting `"gap": true` means messages likely overflowed the 100-message window since the last sync and are permanently unavailable — sync frequently in busy rooms.
 - Never echo or log the API token; `cw auth list` output is safe (tokens are excluded).

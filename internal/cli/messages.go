@@ -1,12 +1,16 @@
 package cli
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 
+	"github.com/kokoichi206/chatwork-cli/internal/chatwork"
 	"github.com/kokoichi206/chatwork-cli/internal/notation"
 	"github.com/kokoichi206/chatwork-cli/internal/output"
+	"github.com/kokoichi206/chatwork-cli/internal/store"
 )
 
 // postResult は投稿系コマンドの JSON 出力。
@@ -38,22 +42,37 @@ func (a *app) messagesReadCmd() *cobra.Command {
 	var (
 		limit int
 		force bool
+		local bool
+		since string
 	)
 	cmd := &cobra.Command{
 		Use:   "read <room_id>",
 		Short: "Fetch messages (up to 100, oldest first)",
-		Long:  "Fetch messages from a room. With --force=false, only messages not yet fetched by this token are returned (empty if none).",
-		Args:  exactArgs(1, "cw messages read <room_id> [--limit N] [--force=false]"),
+		Long: `Fetch messages from a room. With --force=false, only messages not yet fetched by this token are returned (empty if none).
+With --local, read from the history accumulated by 'cw sync' instead of the API; this is the only way past the latest 100 messages.`,
+		Args: exactArgs(1, "cw messages read <room_id> [--limit N] [--force=false] [--local [--since YYYY-MM-DD]]"),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if since != "" && !local {
+				return usagef("--since requires --local (the API only serves the latest 100 messages)")
+			}
+			if local && cmd.Flags().Changed("force") {
+				return usagef("--force has no effect with --local (local history is read without fetching)")
+			}
 			roomID, err := a.resolveRoom(args[0])
 			if err != nil {
 				return err
 			}
-			client, err := a.client()
-			if err != nil {
-				return err
+			var msgs []chatwork.Message
+			if local {
+				msgs, err = a.localMessages(cmd.Context(), roomID, since)
+			} else {
+				var client *chatwork.Client
+				client, err = a.client()
+				if err != nil {
+					return err
+				}
+				msgs, err = client.Messages(cmd.Context(), roomID, force)
 			}
-			msgs, err := client.Messages(cmd.Context(), roomID, force)
 			if err != nil {
 				return err
 			}
@@ -84,7 +103,40 @@ func (a *app) messagesReadCmd() *cobra.Command {
 	}
 	cmd.Flags().IntVar(&limit, "limit", 0, "show only the newest N messages")
 	cmd.Flags().BoolVar(&force, "force", true, "fetch the latest 100 messages regardless of the fetch cursor")
+	cmd.Flags().BoolVar(&local, "local", false, "read from the local history built by 'cw sync' (no message fetch)")
+	cmd.Flags().StringVar(&since, "since", "", "with --local: show messages sent on/after this date (YYYY-MM-DD, local time)")
 	return cmd
+}
+
+// localMessages は cw sync が蓄積した履歴を読む。メッセージ取得の API は呼ばない
+// (CHATWORK_API_TOKEN 使用時のみ、保存先の account_id 解決に /me を 1 回呼ぶ)。
+func (a *app) localMessages(ctx context.Context, roomID int, since string) ([]chatwork.Message, error) {
+	accountID, err := a.storeAccountID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dataDir, err := a.dataDir()
+	if err != nil {
+		return nil, err
+	}
+	msgs, err := store.Load(store.RoomPath(dataDir, accountID, roomID))
+	if err != nil {
+		return nil, err
+	}
+	if since == "" {
+		return msgs, nil
+	}
+	from, err := time.ParseInLocation("2006-01-02", since, time.Local)
+	if err != nil {
+		return nil, usagef("invalid --since %q: must be YYYY-MM-DD", since)
+	}
+	filtered := msgs[:0]
+	for _, m := range msgs {
+		if m.SendTime >= from.Unix() {
+			filtered = append(filtered, m)
+		}
+	}
+	return filtered, nil
 }
 
 func (a *app) messagesSendCmd() *cobra.Command {
