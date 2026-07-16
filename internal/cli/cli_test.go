@@ -42,15 +42,15 @@ func runCLI(t *testing.T, handler http.Handler, opts cliOpts, args ...string) cl
 
 	var stdout, stderr bytes.Buffer
 	root := cli.New(cli.Deps{
-		Stdout:     &stdout,
-		Stderr:     &stderr,
-		Stdin:      strings.NewReader(opts.stdin),
-		ConfigPath: configPath,
-		BaseURL:    srv.URL,
+		Stdout:      &stdout,
+		Stderr:      &stderr,
+		Stdin:       strings.NewReader(opts.stdin),
+		ConfigPath:  configPath,
+		BaseURL:     srv.URL,
 		StdoutIsTTY: opts.isTTY,
 		StdinIsTTY:  opts.isTTY,
-		Getenv:     func(key string) string { return opts.env[key] },
-		Version:    "test",
+		Getenv:      func(key string) string { return opts.env[key] },
+		Version:     "test",
 	})
 	root.SetArgs(args)
 	err := root.Execute()
