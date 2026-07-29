@@ -14,6 +14,38 @@ func tempConfigPath(t *testing.T) string {
 	return filepath.Join(t.TempDir(), "chatwork-cli", "accounts.json")
 }
 
+func TestPath(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+
+	t.Run("XDG_CONFIG_HOME を優先する", func(t *testing.T) {
+		xdg := t.TempDir()
+		t.Setenv("XDG_CONFIG_HOME", xdg)
+
+		got, err := config.Path()
+		if err != nil {
+			t.Fatalf("Path() error = %v", err)
+		}
+		if want := filepath.Join(xdg, "chatwork-cli", "accounts.json"); got != want {
+			t.Errorf("Path() = %q, want %q", got, want)
+		}
+	})
+
+	// 環境変数を継承しないプロセス (launchd / cron / GUI 起動) から呼ばれる経路。
+	// ここが ~/.config 以外を指すと、シェルから認証した設定を読めず「未認証」と誤認する。
+	t.Run("XDG_CONFIG_HOME が空なら ~/.config を使う", func(t *testing.T) {
+		t.Setenv("XDG_CONFIG_HOME", "")
+
+		got, err := config.Path()
+		if err != nil {
+			t.Fatalf("Path() error = %v", err)
+		}
+		if want := filepath.Join(home, ".config", "chatwork-cli", "accounts.json"); got != want {
+			t.Errorf("Path() = %q, want %q", got, want)
+		}
+	})
+}
+
 func TestLoadMissingFileReturnsEmptyConfig(t *testing.T) {
 	cfg, err := config.Load(tempConfigPath(t))
 	if err != nil {

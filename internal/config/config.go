@@ -24,14 +24,18 @@ type Config struct {
 }
 
 // Path は accounts.json の保存先を返す。
-// XDG_CONFIG_HOME を最優先することで、macOS でも ~/.config 配下に設定を統一できる。
+// XDG Base Directory 仕様どおり、XDG_CONFIG_HOME が空なら $HOME/.config を既定とする。
+// os.UserConfigDir() は macOS で ~/Library/Application Support を返すため使わない。
+// これを使うと、環境変数を継承しないプロセス (launchd / cron / GUI 起動) だけが
+// 別ディレクトリを見て「設定が無い」と判断する。
 func Path() (string, error) {
-	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
-		return filepath.Join(xdg, "chatwork-cli", "accounts.json"), nil
-	}
-	dir, err := os.UserConfigDir()
-	if err != nil {
-		return "", fmt.Errorf("resolve config dir: %w", err)
+	dir := os.Getenv("XDG_CONFIG_HOME")
+	if dir == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("resolve home dir: %w", err)
+		}
+		dir = filepath.Join(home, ".config")
 	}
 	return filepath.Join(dir, "chatwork-cli", "accounts.json"), nil
 }
