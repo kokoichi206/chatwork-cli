@@ -52,8 +52,8 @@ const tokenGuideFull = `# Chatwork API トークンの取得と登録
 
 ## 保存場所とセキュリティ
 
-- 保存先: ~/.config/chatwork-cli/accounts.json (XDG_CONFIG_HOME があればそちら、
-  なければ OS 標準の設定ディレクトリ)。パーミッション 0600 で保存されます
+- 保存先: ~/.config/chatwork-cli/accounts.json (XDG_CONFIG_HOME があればそちら)。
+  パーミッション 0600 で保存されます
 - トークンはあなた本人の全権限(閲覧・投稿・削除)を持ちます。第三者に共有しないでください
 - ファイルに保存したくない場合は環境変数 CHATWORK_API_TOKEN でも動作します:
 

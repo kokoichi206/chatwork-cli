@@ -90,8 +90,7 @@ cw my status                          # 未読・タスク数
 
 既存の Slack 向け CLI(~/.config/<tool>/workspaces.json)に倣う。
 
-- 場所: `os.UserConfigDir()/chatwork-cli/`(macOS: `~/Library/Application Support`、
-  ただし `XDG_CONFIG_HOME` があれば `~/.config/chatwork-cli/` を優先)
+- 場所: `$XDG_CONFIG_HOME/chatwork-cli/`(未設定なら XDG 仕様どおり `~/.config/chatwork-cli/`)
 - `accounts.json`:
 
 ```json
